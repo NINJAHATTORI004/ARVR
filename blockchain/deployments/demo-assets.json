@@ -1,0 +1,78 @@
+[
+  {
+    "uniqueId": "DEGREE-MIT-2024-001",
+    "issuerDID": "did:qie:mit-university-verified",
+    "assetType": "DEGREE",
+    "metadata": {
+      "name": "Bachelor of Science in Computer Science",
+      "institution": "Massachusetts Institute of Technology",
+      "graduateId": "STU-2024-001",
+      "graduationDate": "2024-06-15",
+      "gpa": "3.85"
+    },
+    "tokenId": "1",
+    "txHash": "0x61d6509fc4cb264c2abccffabebb65590a30c8f4826db1fff73dbf4e58c0c58d",
+    "status": "MINTED",
+    "tokenURI": "ipfs://QmDemoDEGREEMIT2024001"
+  },
+  {
+    "uniqueId": "LUXURY-ROLEX-SUB-2024-ABC123",
+    "issuerDID": "did:qie:rolex-authorized-dealer",
+    "assetType": "LUXURY_WATCH",
+    "metadata": {
+      "name": "Rolex Submariner",
+      "model": "126610LN",
+      "serialNumber": "ABC123",
+      "purchaseDate": "2024-01-15",
+      "warranty": "5 years"
+    },
+    "tokenId": "2",
+    "txHash": "0xa6de5c7f7177db1337a0ea2c90be2ef787d07804efd4b6b56fc7ec12ce357a9c",
+    "status": "MINTED",
+    "tokenURI": "ipfs://QmDemoLUXURYROLEXSUB2024ABC123"
+  },
+  {
+    "uniqueId": "CERT-AWS-SAA-2024-XYZ789",
+    "issuerDID": "did:qie:amazon-aws-certification",
+    "assetType": "CERTIFICATE",
+    "metadata": {
+      "name": "AWS Solutions Architect Associate",
+      "candidateId": "XYZ789",
+      "issueDate": "2024-03-20",
+      "expiryDate": "2027-03-20",
+      "score": "850/1000"
+    },
+    "tokenId": "3",
+    "txHash": "0xfc1f4e192e071276fbe0047c9d7a9adb19a8f40b15b5c47d06c3367a399ecdc1",
+    "status": "MINTED",
+    "tokenURI": "ipfs://QmDemoCERTAWSSAA2024XYZ789"
+  },
+  {
+    "uniqueId": "ART-PICASSO-AUTH-2024-P001",
+    "issuerDID": "did:qie:christies-auction-house",
+    "assetType": "ARTWORK",
+    "metadata": {
+      "name": "Authenticated Picasso Print",
+      "artist": "Pablo Picasso",
+      "title": "La Colombe",
+      "year": "1949",
+      "edition": "Limited Edition 45/500"
+    },
+    "tokenId": "4",
+    "txHash": "0xa5e31c03ec58cc034b4ba1575082c8a3ba4f4aa4381dd66892f91cf7f3939085",
+    "status": "MINTED",
+    "tokenURI": "ipfs://QmDemoARTPICASSOAUTH2024P001"
+  },
+  {
+    "uniqueId": "FAKE-DEGREE-NOTREAL-2024",
+    "issuerDID": "",
+    "assetType": "FAKE",
+    "skip": true,
+    "metadata": {
+      "name": "Fake Degree - For Demo",
+      "note": "This ID is intentionally NOT minted to demonstrate verification failure"
+    },
+    "status": "NOT_MINTED",
+    "note": "Intentionally not minted for demo verification failure"
+  }
+]

@@ -1,0 +1,140 @@
+{
+  "demoAssets": [
+    {
+      "uniqueId": "DEGREE-MIT-2024-001",
+      "name": "Bachelor of Science in Computer Science",
+      "type": "DEGREE",
+      "issuer": {
+        "did": "did:qie:mit-university-verified",
+        "name": "Massachusetts Institute of Technology",
+        "verified": true
+      },
+      "metadata": {
+        "graduateId": "STU-2024-001",
+        "graduationDate": "2024-06-15",
+        "gpa": "3.85",
+        "department": "Department of Electrical Engineering and Computer Science"
+      },
+      "qrCodeData": "ARVA:DEGREE-MIT-2024-001",
+      "status": "VALID"
+    },
+    {
+      "uniqueId": "LUXURY-ROLEX-SUB-2024-ABC123",
+      "name": "Rolex Submariner",
+      "type": "LUXURY_WATCH",
+      "issuer": {
+        "did": "did:qie:rolex-authorized-dealer",
+        "name": "Rolex Authorized Dealer Network",
+        "verified": true
+      },
+      "metadata": {
+        "model": "126610LN",
+        "serialNumber": "ABC123",
+        "purchaseDate": "2024-01-15",
+        "warranty": "5 years",
+        "caseMaterial": "Oystersteel",
+        "movement": "Perpetual, mechanical, self-winding"
+      },
+      "qrCodeData": "ARVA:LUXURY-ROLEX-SUB-2024-ABC123",
+      "status": "VALID"
+    },
+    {
+      "uniqueId": "CERT-AWS-SAA-2024-XYZ789",
+      "name": "AWS Solutions Architect Associate",
+      "type": "CERTIFICATE",
+      "issuer": {
+        "did": "did:qie:amazon-aws-certification",
+        "name": "Amazon Web Services",
+        "verified": true
+      },
+      "metadata": {
+        "candidateId": "XYZ789",
+        "issueDate": "2024-03-20",
+        "expiryDate": "2027-03-20",
+        "score": "850/1000",
+        "validationNumber": "AWS-SAA-2024-XYZ789"
+      },
+      "qrCodeData": "ARVA:CERT-AWS-SAA-2024-XYZ789",
+      "status": "VALID"
+    },
+    {
+      "uniqueId": "ART-PICASSO-AUTH-2024-P001",
+      "name": "Authenticated Picasso Print",
+      "type": "ARTWORK",
+      "issuer": {
+        "did": "did:qie:christies-auction-house",
+        "name": "Christie's Auction House",
+        "verified": true
+      },
+      "metadata": {
+        "artist": "Pablo Picasso",
+        "title": "La Colombe",
+        "year": "1949",
+        "medium": "Lithograph",
+        "edition": "Limited Edition 45/500",
+        "provenance": "Verified by Christie's",
+        "dimensions": "65 x 50 cm"
+      },
+      "qrCodeData": "ARVA:ART-PICASSO-AUTH-2024-P001",
+      "status": "VALID"
+    }
+  ],
+  "fakeAssets": [
+    {
+      "uniqueId": "FAKE-DEGREE-2024-XXX",
+      "name": "Fake University Degree",
+      "type": "DEGREE",
+      "status": "NOT_REGISTERED",
+      "note": "This ID is intentionally not minted to demonstrate verification failure"
+    },
+    {
+      "uniqueId": "COUNTERFEIT-WATCH-123",
+      "name": "Counterfeit Watch",
+      "type": "LUXURY_WATCH",
+      "status": "NOT_REGISTERED",
+      "note": "This ID is intentionally not minted to demonstrate verification failure"
+    },
+    {
+      "uniqueId": "INVALID-CERT-000",
+      "name": "Invalid Certificate",
+      "type": "CERTIFICATE",
+      "status": "NOT_REGISTERED",
+      "note": "This ID is intentionally not minted to demonstrate verification failure"
+    }
+  ],
+  "testScenarios": [
+    {
+      "name": "Valid Degree Verification",
+      "description": "Scan a valid degree certificate and see green 'VERIFIED' overlay",
+      "steps": [
+        "Open ARVA app",
+        "Scan QR code or enter: DEGREE-MIT-2024-001",
+        "Verify green checkmark appears",
+        "View issuer details (MIT)"
+      ],
+      "expectedResult": "Verified - Shows issuer DID and owner address"
+    },
+    {
+      "name": "Invalid/Fake Asset Detection",
+      "description": "Scan a fake asset and see red 'NOT VERIFIED' overlay",
+      "steps": [
+        "Open ARVA app",
+        "Scan QR code or enter: FAKE-DEGREE-2024-XXX",
+        "Verify red X mark appears",
+        "View 'Not Found' message"
+      ],
+      "expectedResult": "Not Verified - Asset not found in registry"
+    },
+    {
+      "name": "Multiple Asset Types",
+      "description": "Verify different types of assets",
+      "steps": [
+        "Test with DEGREE-MIT-2024-001 (Degree)",
+        "Test with LUXURY-ROLEX-SUB-2024-ABC123 (Watch)",
+        "Test with CERT-AWS-SAA-2024-XYZ789 (Certificate)",
+        "Test with ART-PICASSO-AUTH-2024-P001 (Artwork)"
+      ],
+      "expectedResult": "All show as verified with correct asset type"
+    }
+  ]
+}

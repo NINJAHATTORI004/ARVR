@@ -1,0 +1,8 @@
+{
+  "network": "localhost",
+  "contractAddress": "0x5FbDB2315678afecb367f032d93F642f64180aa3",
+  "deployer": "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
+  "transactionHash": "0x6cad9b1545e18683e0e16f8dca05da479499350974ab0d42f7017c3804d640fa",
+  "timestamp": "2025-12-14T13:03:42.265Z",
+  "chainId": "31337"
+}

@@ -1,0 +1,192 @@
+{
+  "name": "ARVA Asset Metadata",
+  "description": "Metadata standard for ARVA NFT assets on QIE Blockchain",
+  "version": "1.0.0",
+  "examples": [
+    {
+      "type": "DEGREE",
+      "schema": {
+        "name": "Bachelor of Science in Computer Science",
+        "description": "Academic degree certificate verified on QIE Blockchain",
+        "image": "ipfs://QmExampleImageHash...",
+        "external_url": "https://arva.io/verify/DEGREE-MIT-2024-001",
+        "attributes": [
+          {
+            "trait_type": "Institution",
+            "value": "Massachusetts Institute of Technology"
+          },
+          {
+            "trait_type": "Degree Type",
+            "value": "Bachelor of Science"
+          },
+          {
+            "trait_type": "Field of Study",
+            "value": "Computer Science"
+          },
+          {
+            "trait_type": "Graduate ID",
+            "value": "STU-2024-001"
+          },
+          {
+            "trait_type": "Graduation Date",
+            "value": "2024-06-15"
+          },
+          {
+            "trait_type": "GPA",
+            "value": "3.85"
+          },
+          {
+            "display_type": "date",
+            "trait_type": "Issue Date",
+            "value": 1718409600
+          }
+        ],
+        "issuer": {
+          "did": "did:qie:mit-university-verified",
+          "name": "Massachusetts Institute of Technology",
+          "website": "https://mit.edu",
+          "verified": true
+        }
+      }
+    },
+    {
+      "type": "LUXURY_WATCH",
+      "schema": {
+        "name": "Rolex Submariner",
+        "description": "Authenticated luxury timepiece verified on QIE Blockchain",
+        "image": "ipfs://QmExampleImageHash...",
+        "external_url": "https://arva.io/verify/LUXURY-ROLEX-SUB-2024-ABC123",
+        "attributes": [
+          {
+            "trait_type": "Brand",
+            "value": "Rolex"
+          },
+          {
+            "trait_type": "Model",
+            "value": "Submariner"
+          },
+          {
+            "trait_type": "Reference Number",
+            "value": "126610LN"
+          },
+          {
+            "trait_type": "Serial Number",
+            "value": "ABC123"
+          },
+          {
+            "trait_type": "Movement",
+            "value": "Automatic"
+          },
+          {
+            "trait_type": "Case Material",
+            "value": "Oystersteel"
+          },
+          {
+            "display_type": "date",
+            "trait_type": "Purchase Date",
+            "value": 1705276800
+          },
+          {
+            "trait_type": "Warranty Status",
+            "value": "Active - 5 Years"
+          }
+        ],
+        "issuer": {
+          "did": "did:qie:rolex-authorized-dealer",
+          "name": "Rolex Authorized Dealer Network",
+          "website": "https://rolex.com",
+          "verified": true
+        }
+      }
+    },
+    {
+      "type": "CERTIFICATE",
+      "schema": {
+        "name": "AWS Solutions Architect Associate",
+        "description": "Professional certification verified on QIE Blockchain",
+        "image": "ipfs://QmExampleImageHash...",
+        "external_url": "https://arva.io/verify/CERT-AWS-SAA-2024-XYZ789",
+        "attributes": [
+          {
+            "trait_type": "Certification Name",
+            "value": "AWS Certified Solutions Architect - Associate"
+          },
+          {
+            "trait_type": "Candidate ID",
+            "value": "XYZ789"
+          },
+          {
+            "trait_type": "Score",
+            "value": "850/1000"
+          },
+          {
+            "display_type": "date",
+            "trait_type": "Issue Date",
+            "value": 1710892800
+          },
+          {
+            "display_type": "date",
+            "trait_type": "Expiry Date",
+            "value": 1805500800
+          },
+          {
+            "trait_type": "Status",
+            "value": "Active"
+          }
+        ],
+        "issuer": {
+          "did": "did:qie:amazon-aws-certification",
+          "name": "Amazon Web Services",
+          "website": "https://aws.amazon.com",
+          "verified": true
+        }
+      }
+    },
+    {
+      "type": "ARTWORK",
+      "schema": {
+        "name": "Authenticated Picasso Print",
+        "description": "Limited edition art print authenticated on QIE Blockchain",
+        "image": "ipfs://QmExampleImageHash...",
+        "external_url": "https://arva.io/verify/ART-PICASSO-AUTH-2024-P001",
+        "attributes": [
+          {
+            "trait_type": "Artist",
+            "value": "Pablo Picasso"
+          },
+          {
+            "trait_type": "Title",
+            "value": "La Colombe"
+          },
+          {
+            "trait_type": "Year Created",
+            "value": "1949"
+          },
+          {
+            "trait_type": "Medium",
+            "value": "Lithograph"
+          },
+          {
+            "trait_type": "Edition",
+            "value": "Limited Edition 45/500"
+          },
+          {
+            "trait_type": "Provenance",
+            "value": "Christie's Auction House"
+          },
+          {
+            "display_type": "date",
+            "trait_type": "Authentication Date",
+            "value": 1702598400
+          }
+        ],
+        "issuer": {
+          "did": "did:qie:christies-auction-house",
+          "name": "Christie's Auction House",
+          "website": "https://christies.com",
+          "verified": true
+        }
+      }
+    }
+  ]
+}

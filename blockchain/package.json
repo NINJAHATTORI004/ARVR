@@ -1,0 +1,38 @@
+{
+  "name": "arva-blockchain",
+  "version": "1.0.0",
+  "description": "ARVA - Augmented Reality Verification of Assets - Blockchain Smart Contracts",
+  "main": "hardhat.config.js",
+  "scripts": {
+    "compile": "hardhat compile",
+    "test": "hardhat test",
+    "test:coverage": "hardhat coverage",
+    "deploy:local": "hardhat run scripts/deploy.js --network localhost",
+    "deploy:qie-testnet": "hardhat run scripts/deploy.js --network qie_testnet",
+    "deploy:sepolia": "hardhat run scripts/deploy.js --network sepolia",
+    "node": "hardhat node",
+    "verify": "hardhat verify --network qie_testnet",
+    "mint:demo": "hardhat run scripts/mint-demo-assets.js --network localhost",
+    "clean": "hardhat clean"
+  },
+  "keywords": [
+    "blockchain",
+    "nft",
+    "verification",
+    "ar",
+    "qie",
+    "ethereum",
+    "solidity"
+  ],
+  "author": "ARVA Team",
+  "license": "MIT",
+  "devDependencies": {
+    "@nomicfoundation/hardhat-toolbox": "^4.0.0",
+    "@openzeppelin/contracts": "^4.9.3",
+    "dotenv": "^16.3.1",
+    "hardhat": "^2.19.0"
+  },
+  "dependencies": {
+    "ethers": "^6.9.0"
+  }
+}

@@ -11,7 +11,7 @@
       "gpa": "3.85"
     },
     "tokenId": "1",
-    "txHash": "0x61d6509fc4cb264c2abccffabebb65590a30c8f4826db1fff73dbf4e58c0c58d",
+    "txHash": "0xed108fafb196dbc2f839533d61b0e79edd3236e41040d8d09cff7b6a64997a2f",
     "status": "MINTED",
     "tokenURI": "ipfs://QmDemoDEGREEMIT2024001"
   },
@@ -27,7 +27,7 @@
       "warranty": "5 years"
     },
     "tokenId": "2",
-    "txHash": "0xa6de5c7f7177db1337a0ea2c90be2ef787d07804efd4b6b56fc7ec12ce357a9c",
+    "txHash": "0x4e54ad798a814a70efdd4ae3ae1c6b2937f9891aaf5288fbd23043e55e4d436a",
     "status": "MINTED",
     "tokenURI": "ipfs://QmDemoLUXURYROLEXSUB2024ABC123"
   },
@@ -43,7 +43,7 @@
       "score": "850/1000"
     },
     "tokenId": "3",
-    "txHash": "0xfc1f4e192e071276fbe0047c9d7a9adb19a8f40b15b5c47d06c3367a399ecdc1",
+    "txHash": "0xb2f5a75cf51a11492c4b27ce66bb607267735debf3014ded8540db8ac981c5c7",
     "status": "MINTED",
     "tokenURI": "ipfs://QmDemoCERTAWSSAA2024XYZ789"
   },
@@ -59,7 +59,7 @@
       "edition": "Limited Edition 45/500"
     },
     "tokenId": "4",
-    "txHash": "0xa5e31c03ec58cc034b4ba1575082c8a3ba4f4aa4381dd66892f91cf7f3939085",
+    "txHash": "0x71794b18f46cebbaaefcf7eb7111fb2057a6fc5e8777c06921af4e739dc3e5b6",
     "status": "MINTED",
     "tokenURI": "ipfs://QmDemoARTPICASSOAUTH2024P001"
   },

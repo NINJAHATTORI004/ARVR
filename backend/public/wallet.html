@@ -1,0 +1,1155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ARVA - MetaMask Wallet Integration | QIE Blockchain</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/5.7.2/ethers.umd.min.js"></script>
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --metamask-orange: #f6851b;
+            --success: #10b981;
+            --error: #ef4444;
+            --warning: #f59e0b;
+            --bg-dark: #0f172a;
+            --bg-card: #1e293b;
+            --bg-input: #0f172a;
+            --text: #f1f5f9;
+            --text-muted: #94a3b8;
+            --border: rgba(255,255,255,0.1);
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
+            color: var(--text);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container { max-width: 1000px; margin: 0 auto; }
+        
+        header {
+            text-align: center;
+            padding: 30px 0;
+        }
+        
+        .logo {
+            font-size: 2.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #6366f1, #a855f7, #ec4899);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 8px;
+        }
+        
+        .subtitle { color: var(--text-muted); font-size: 1rem; }
+        
+        .badge-row {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .badge {
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        
+        .badge-hackathon { background: linear-gradient(135deg, #6366f1, #a855f7); }
+        .badge-qie { background: linear-gradient(135deg, #10b981, #059669); }
+        .badge-metamask { background: var(--metamask-orange); }
+        
+        .card {
+            background: var(--bg-card);
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 20px;
+            border: 1px solid var(--border);
+            backdrop-filter: blur(10px);
+        }
+        
+        .card h2 {
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.3rem;
+        }
+        
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .btn:hover { transform: translateY(-2px); box-shadow: 0 4px 20px rgba(0,0,0,0.3); }
+        .btn:active { transform: translateY(0); }
+        .btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+        
+        .btn-metamask {
+            background: linear-gradient(135deg, #f6851b, #e2761b);
+            color: white;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+        }
+        
+        .btn-success {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+        }
+        
+        .btn-outline {
+            background: transparent;
+            border: 2px solid var(--primary);
+            color: var(--primary);
+        }
+        
+        .btn-outline:hover {
+            background: var(--primary);
+            color: white;
+        }
+        
+        .wallet-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        
+        .wallet-status {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 16px;
+            border-radius: 10px;
+            font-size: 0.9rem;
+        }
+        
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        
+        .connected { background: rgba(16, 185, 129, 0.15); border: 1px solid var(--success); }
+        .connected .status-dot { background: var(--success); }
+        
+        .disconnected { background: rgba(239, 68, 68, 0.15); border: 1px solid var(--error); }
+        .disconnected .status-dot { background: var(--error); }
+        
+        .wrong-network { background: rgba(245, 158, 11, 0.15); border: 1px solid var(--warning); }
+        .wrong-network .status-dot { background: var(--warning); }
+        
+        .wallet-info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .info-card {
+            background: var(--bg-input);
+            padding: 16px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+        }
+        
+        .info-label {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 6px;
+        }
+        
+        .info-value {
+            font-size: 1.1rem;
+            font-weight: 600;
+            word-break: break-all;
+        }
+        
+        .info-value.large {
+            font-size: 1.5rem;
+            background: linear-gradient(135deg, var(--success), #34d399);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .address-display {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .copy-btn {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            color: var(--text-muted);
+            padding: 6px 10px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: all 0.2s;
+        }
+        
+        .copy-btn:hover { background: var(--primary); color: white; border-color: var(--primary); }
+        
+        .network-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            background: rgba(99, 102, 241, 0.2);
+            border: 1px solid var(--primary);
+            border-radius: 20px;
+            font-size: 0.85rem;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 15px;
+        }
+        
+        .input-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        
+        input, select {
+            flex: 1;
+            padding: 14px 18px;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            background: var(--bg-input);
+            color: var(--text);
+            font-size: 1rem;
+            transition: border-color 0.2s;
+        }
+        
+        input:focus, select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+        }
+        
+        .tx-history {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        
+        .tx-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px;
+            background: var(--bg-input);
+            border-radius: 8px;
+            margin-bottom: 8px;
+            border: 1px solid var(--border);
+        }
+        
+        .tx-hash {
+            font-family: monospace;
+            font-size: 0.85rem;
+            color: var(--primary);
+        }
+        
+        .tx-status {
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        
+        .tx-success { background: rgba(16, 185, 129, 0.2); color: var(--success); }
+        .tx-pending { background: rgba(245, 158, 11, 0.2); color: var(--warning); }
+        .tx-failed { background: rgba(239, 68, 68, 0.2); color: var(--error); }
+        
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.8);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .modal {
+            background: var(--bg-card);
+            border-radius: 20px;
+            padding: 30px;
+            max-width: 500px;
+            width: 100%;
+            border: 1px solid var(--border);
+        }
+        
+        .modal h3 {
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid var(--border);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+        
+        @keyframes spin { to { transform: rotate(360deg); } }
+        
+        .result-box {
+            background: var(--bg-input);
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 20px;
+            border-left: 4px solid var(--border);
+        }
+        
+        .result-box.success { border-left-color: var(--success); }
+        .result-box.error { border-left-color: var(--error); }
+        
+        .test-assets {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+        
+        .asset-card {
+            background: var(--bg-input);
+            border-radius: 12px;
+            padding: 16px;
+            border: 1px solid var(--border);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .asset-card:hover {
+            border-color: var(--primary);
+            transform: translateY(-2px);
+        }
+        
+        .asset-card.invalid {
+            border-color: var(--error);
+            background: rgba(239, 68, 68, 0.1);
+        }
+        
+        .asset-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .asset-type {
+            font-size: 0.75rem;
+            padding: 4px 8px;
+            border-radius: 6px;
+            background: var(--primary);
+        }
+        
+        .asset-id {
+            font-family: monospace;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+        
+        .sign-message-area {
+            margin-top: 15px;
+        }
+        
+        textarea {
+            width: 100%;
+            padding: 14px;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            background: var(--bg-input);
+            color: var(--text);
+            font-size: 1rem;
+            resize: vertical;
+            min-height: 100px;
+        }
+        
+        textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+        
+        .signature-display {
+            background: var(--bg-input);
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 15px;
+            word-break: break-all;
+            font-family: monospace;
+            font-size: 0.85rem;
+            border: 1px solid var(--success);
+        }
+        
+        @media (max-width: 600px) {
+            .wallet-header { flex-direction: column; }
+            .input-group { flex-direction: column; }
+            .btn { width: 100%; justify-content: center; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">🔐 ARVA</div>
+            <p class="subtitle">Augmented Reality Verification of Assets</p>
+            <div class="badge-row">
+                <span class="badge badge-hackathon">🏆 QIE Hackathon</span>
+                <span class="badge badge-qie">⛓️ Chain ID: 5656</span>
+                <span class="badge badge-metamask">🦊 MetaMask Ready</span>
+            </div>
+        </header>
+        
+        <!-- Wallet Connection Card -->
+        <div class="card">
+            <div class="wallet-header">
+                <h2>🦊 MetaMask Wallet</h2>
+                <div id="walletStatus" class="wallet-status disconnected">
+                    <span class="status-dot"></span>
+                    <span id="statusText">Not Connected</span>
+                </div>
+            </div>
+            
+            <div id="connectSection">
+                <p style="color: var(--text-muted); margin-bottom: 15px;">
+                    Connect your MetaMask wallet to interact with the QIE Blockchain
+                </p>
+                <button id="connectBtn" class="btn btn-metamask" onclick="connectMetaMask()">
+                    🦊 Connect MetaMask
+                </button>
+            </div>
+            
+            <div id="walletDetails" style="display: none;">
+                <div class="wallet-info-grid">
+                    <div class="info-card">
+                        <div class="info-label">Wallet Address</div>
+                        <div class="info-value">
+                            <div class="address-display">
+                                <span id="displayAddress">-</span>
+                                <button class="copy-btn" onclick="copyAddress()">📋 Copy</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="info-card">
+                        <div class="info-label">Balance</div>
+                        <div class="info-value large" id="walletBalance">0.0000 QIE</div>
+                    </div>
+                    <div class="info-card">
+                        <div class="info-label">Network</div>
+                        <div class="info-value">
+                            <span class="network-badge" id="networkBadge">
+                                <span id="networkName">Unknown</span>
+                            </span>
+                        </div>
+                    </div>
+                    <div class="info-card">
+                        <div class="info-label">Chain ID</div>
+                        <div class="info-value" id="chainIdDisplay">-</div>
+                    </div>
+                </div>
+                
+                <div class="action-buttons">
+                    <button class="btn btn-success" onclick="addQIENetwork()">➕ Add QIE Network</button>
+                    <button class="btn btn-primary" onclick="switchToQIE()">🔄 Switch to QIE</button>
+                    <button class="btn btn-outline" onclick="refreshBalance()">🔃 Refresh</button>
+                    <button class="btn btn-outline" onclick="disconnectWallet()">🔌 Disconnect</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Sign Message Card -->
+        <div class="card">
+            <h2>✍️ Sign Message (Wallet Proof)</h2>
+            <p style="color: var(--text-muted); margin-bottom: 15px;">
+                Prove wallet ownership by signing a message - no gas required!
+            </p>
+            <div class="sign-message-area">
+                <textarea id="messageToSign" placeholder="Enter message to sign...">I am verifying my identity for ARVA on QIE Blockchain at timestamp: </textarea>
+                <div style="margin-top: 10px;">
+                    <button class="btn btn-primary" onclick="signMessage()">✍️ Sign Message</button>
+                </div>
+                <div id="signatureResult"></div>
+            </div>
+        </div>
+        
+        <!-- Send Transaction Card -->
+        <div class="card">
+            <h2>💸 Send Transaction</h2>
+            <p style="color: var(--text-muted); margin-bottom: 15px;">
+                Send QIE tokens to another address (requires QIE for gas)
+            </p>
+            <div class="input-group">
+                <input type="text" id="recipientAddress" placeholder="Recipient Address (0x...)">
+            </div>
+            <div class="input-group">
+                <input type="text" id="sendAmount" placeholder="Amount (QIE)">
+                <button class="btn btn-success" onclick="sendTransaction()">💸 Send</button>
+            </div>
+            <div id="txResult"></div>
+        </div>
+        
+        <!-- Asset Verification Card -->
+        <div class="card">
+            <h2>🔍 On-Chain Asset Verification</h2>
+            <div class="input-group">
+                <input type="text" id="assetId" placeholder="Enter Asset ID to verify...">
+                <button class="btn btn-primary" onclick="verifyAsset()">🔍 Verify</button>
+            </div>
+            
+            <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 10px;">
+                Click to verify these demo assets:
+            </p>
+            
+            <div class="test-assets">
+                <div class="asset-card" onclick="verifyAsset('DEGREE-MIT-2024-001')">
+                    <div class="asset-header">
+                        <span>📜 MIT Degree</span>
+                        <span class="asset-type">DEGREE</span>
+                    </div>
+                    <div class="asset-id">DEGREE-MIT-2024-001</div>
+                </div>
+                <div class="asset-card" onclick="verifyAsset('LUXURY-ROLEX-SUB-2024-ABC123')">
+                    <div class="asset-header">
+                        <span>⌚ Rolex Watch</span>
+                        <span class="asset-type">LUXURY</span>
+                    </div>
+                    <div class="asset-id">LUXURY-ROLEX-SUB-2024-ABC123</div>
+                </div>
+                <div class="asset-card" onclick="verifyAsset('CERT-AWS-SAA-2024-XYZ789')">
+                    <div class="asset-header">
+                        <span>🎓 AWS Certificate</span>
+                        <span class="asset-type">CERT</span>
+                    </div>
+                    <div class="asset-id">CERT-AWS-SAA-2024-XYZ789</div>
+                </div>
+                <div class="asset-card invalid" onclick="verifyAsset('FAKE-DEGREE-NOTREAL-2024')">
+                    <div class="asset-header">
+                        <span>❌ Fake Asset</span>
+                        <span class="asset-type" style="background: var(--error);">FAKE</span>
+                    </div>
+                    <div class="asset-id">FAKE-DEGREE-NOTREAL-2024</div>
+                </div>
+            </div>
+            
+            <div id="verifyResult"></div>
+        </div>
+        
+        <!-- Transaction History -->
+        <div class="card">
+            <h2>📜 Transaction History</h2>
+            <div class="tx-history" id="txHistory">
+                <p style="color: var(--text-muted); text-align: center; padding: 20px;">
+                    No transactions yet. Connect wallet to start.
+                </p>
+            </div>
+        </div>
+        
+        <!-- Contract Info -->
+        <div class="card">
+            <h2>📋 Smart Contract Info</h2>
+            <div class="wallet-info-grid">
+                <div class="info-card">
+                    <div class="info-label">Contract Address</div>
+                    <div class="info-value" style="font-size: 0.9rem; font-family: monospace;">
+                        0x5FbDB2315678afecb367f032d93F642f64180aa3
+                    </div>
+                </div>
+                <div class="info-card">
+                    <div class="info-label">Network</div>
+                    <div class="info-value">QIE Blockchain</div>
+                </div>
+                <div class="info-card">
+                    <div class="info-label">Chain ID</div>
+                    <div class="info-value">5656 (0x1618)</div>
+                </div>
+                <div class="info-card">
+                    <div class="info-label">Block Explorer</div>
+                    <div class="info-value">
+                        <a href="https://mainnet.qiblockchain.online" target="_blank" 
+                           style="color: var(--primary);">Explorer ↗</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Loading Modal -->
+    <div class="modal-overlay" id="loadingModal">
+        <div class="modal">
+            <h3>⏳ Processing...</h3>
+            <div class="loading-spinner"></div>
+            <p id="loadingText" style="text-align: center; color: var(--text-muted);">
+                Please confirm in MetaMask...
+            </p>
+        </div>
+    </div>
+    
+    <script>
+        // ═══════════════════════════════════════════════════════════════════
+        // CONFIGURATION
+        // ═══════════════════════════════════════════════════════════════════
+        
+        const API_URL = 'http://localhost:3001';
+        const QIE_CHAIN_ID = '0x1618'; // 5656 in hex
+        const QIE_NETWORK_PARAMS = {
+            chainId: QIE_CHAIN_ID,
+            chainName: 'QIE Blockchain',
+            nativeCurrency: {
+                name: 'QIE',
+                symbol: 'QIE',
+                decimals: 18
+            },
+            rpcUrls: ['https://rpc-main1.qiblockchain.online'],
+            blockExplorerUrls: ['https://mainnet.qiblockchain.online']
+        };
+        
+        // State
+        let provider = null;
+        let signer = null;
+        let connectedAddress = null;
+        let currentChainId = null;
+        let transactions = [];
+        
+        // ═══════════════════════════════════════════════════════════════════
+        // INITIALIZATION
+        // ═══════════════════════════════════════════════════════════════════
+        
+        document.addEventListener('DOMContentLoaded', async () => {
+            // Add timestamp to message
+            document.getElementById('messageToSign').value += Date.now();
+            
+            // Check if MetaMask is installed
+            if (typeof window.ethereum !== 'undefined') {
+                console.log('MetaMask detected!');
+                
+                // Setup event listeners
+                window.ethereum.on('accountsChanged', handleAccountsChanged);
+                window.ethereum.on('chainChanged', handleChainChanged);
+                window.ethereum.on('disconnect', handleDisconnect);
+                
+                // Check if already connected
+                const accounts = await window.ethereum.request({ method: 'eth_accounts' });
+                if (accounts.length > 0) {
+                    await connectMetaMask();
+                }
+            } else {
+                document.getElementById('connectBtn').innerHTML = '⚠️ Install MetaMask';
+                document.getElementById('connectBtn').onclick = () => {
+                    window.open('https://metamask.io/download/', '_blank');
+                };
+            }
+        });
+        
+        // ═══════════════════════════════════════════════════════════════════
+        // WALLET CONNECTION
+        // ═══════════════════════════════════════════════════════════════════
+        
+        async function connectMetaMask() {
+            if (typeof window.ethereum === 'undefined') {
+                alert('Please install MetaMask first!');
+                return;
+            }
+            
+            try {
+                showLoading('Connecting to MetaMask...');
+                
+                // Request account access
+                const accounts = await window.ethereum.request({ 
+                    method: 'eth_requestAccounts' 
+                });
+                
+                if (accounts.length === 0) {
+                    throw new Error('No accounts found');
+                }
+                
+                // Setup ethers provider
+                provider = new ethers.providers.Web3Provider(window.ethereum);
+                signer = provider.getSigner();
+                connectedAddress = accounts[0];
+                
+                // Get chain ID
+                currentChainId = await window.ethereum.request({ method: 'eth_chainId' });
+                
+                // Update UI
+                await updateWalletUI();
+                
+                hideLoading();
+                addTransaction('Wallet Connected', 'success');
+                
+            } catch (error) {
+                hideLoading();
+                console.error('Connection error:', error);
+                
+                if (error.code === 4001) {
+                    alert('Connection rejected. Please try again.');
+                } else {
+                    alert('Failed to connect: ' + error.message);
+                }
+            }
+        }
+        
+        async function updateWalletUI() {
+            if (!connectedAddress) return;
+            
+            // Show wallet details
+            document.getElementById('connectSection').style.display = 'none';
+            document.getElementById('walletDetails').style.display = 'block';
+            
+            // Display address (truncated)
+            const shortAddress = `${connectedAddress.slice(0, 6)}...${connectedAddress.slice(-4)}`;
+            document.getElementById('displayAddress').textContent = shortAddress;
+            
+            // Get and display balance
+            await refreshBalance();
+            
+            // Update network info
+            updateNetworkDisplay();
+            
+            // Update status
+            updateConnectionStatus();
+        }
+        
+        async function refreshBalance() {
+            if (!provider || !connectedAddress) return;
+            
+            try {
+                const balance = await provider.getBalance(connectedAddress);
+                const formatted = parseFloat(ethers.utils.formatEther(balance)).toFixed(4);
+                document.getElementById('walletBalance').textContent = `${formatted} QIE`;
+            } catch (error) {
+                console.error('Balance error:', error);
+                document.getElementById('walletBalance').textContent = 'Error';
+            }
+        }
+        
+        function updateNetworkDisplay() {
+            const chainIdDecimal = parseInt(currentChainId, 16);
+            document.getElementById('chainIdDisplay').textContent = `${chainIdDecimal} (${currentChainId})`;
+            
+            let networkName = 'Unknown Network';
+            if (currentChainId === QIE_CHAIN_ID) {
+                networkName = '✅ QIE Blockchain';
+            } else if (currentChainId === '0x1') {
+                networkName = 'Ethereum Mainnet';
+            } else if (currentChainId === '0x5') {
+                networkName = 'Goerli Testnet';
+            } else if (currentChainId === '0xaa36a7') {
+                networkName = 'Sepolia Testnet';
+            } else if (currentChainId === '0x7a69') {
+                networkName = 'Hardhat Local';
+            }
+            
+            document.getElementById('networkName').textContent = networkName;
+        }
+        
+        function updateConnectionStatus() {
+            const statusEl = document.getElementById('walletStatus');
+            const statusText = document.getElementById('statusText');
+            
+            if (!connectedAddress) {
+                statusEl.className = 'wallet-status disconnected';
+                statusText.textContent = 'Not Connected';
+            } else if (currentChainId !== QIE_CHAIN_ID && currentChainId !== '0x7a69') {
+                statusEl.className = 'wallet-status wrong-network';
+                statusText.textContent = 'Wrong Network';
+            } else {
+                statusEl.className = 'wallet-status connected';
+                statusText.textContent = 'Connected';
+            }
+        }
+        
+        function disconnectWallet() {
+            connectedAddress = null;
+            provider = null;
+            signer = null;
+            currentChainId = null;
+            
+            document.getElementById('connectSection').style.display = 'block';
+            document.getElementById('walletDetails').style.display = 'none';
+            updateConnectionStatus();
+            
+            addTransaction('Wallet Disconnected', 'success');
+        }
+        
+        // ═══════════════════════════════════════════════════════════════════
+        // NETWORK MANAGEMENT
+        // ═══════════════════════════════════════════════════════════════════
+        
+        async function addQIENetwork() {
+            try {
+                showLoading('Adding QIE Network...');
+                
+                await window.ethereum.request({
+                    method: 'wallet_addEthereumChain',
+                    params: [QIE_NETWORK_PARAMS]
+                });
+                
+                hideLoading();
+                addTransaction('QIE Network Added', 'success');
+                alert('QIE Network added successfully!');
+                
+            } catch (error) {
+                hideLoading();
+                console.error('Add network error:', error);
+                
+                if (error.code === 4001) {
+                    alert('Network addition rejected.');
+                } else {
+                    alert('Failed to add network: ' + error.message);
+                }
+            }
+        }
+        
+        async function switchToQIE() {
+            try {
+                showLoading('Switching to QIE Network...');
+                
+                await window.ethereum.request({
+                    method: 'wallet_switchEthereumChain',
+                    params: [{ chainId: QIE_CHAIN_ID }]
+                });
+                
+                hideLoading();
+                
+            } catch (error) {
+                hideLoading();
+                
+                // If network doesn't exist, add it
+                if (error.code === 4902) {
+                    await addQIENetwork();
+                } else if (error.code === 4001) {
+                    alert('Network switch rejected.');
+                } else {
+                    alert('Failed to switch network: ' + error.message);
+                }
+            }
+        }
+        
+        // ═══════════════════════════════════════════════════════════════════
+        // MESSAGE SIGNING
+        // ═══════════════════════════════════════════════════════════════════
+        
+        async function signMessage() {
+            if (!signer) {
+                alert('Please connect your wallet first!');
+                return;
+            }
+            
+            const message = document.getElementById('messageToSign').value;
+            if (!message.trim()) {
+                alert('Please enter a message to sign.');
+                return;
+            }
+            
+            try {
+                showLoading('Please sign the message in MetaMask...');
+                
+                const signature = await signer.signMessage(message);
+                
+                hideLoading();
+                
+                document.getElementById('signatureResult').innerHTML = `
+                    <div class="signature-display">
+                        <strong>✅ Message Signed Successfully!</strong><br><br>
+                        <strong>Message:</strong><br>${message}<br><br>
+                        <strong>Signature:</strong><br>${signature}<br><br>
+                        <strong>Signer:</strong><br>${connectedAddress}
+                    </div>
+                `;
+                
+                addTransaction('Message Signed', 'success');
+                
+            } catch (error) {
+                hideLoading();
+                console.error('Sign error:', error);
+                
+                document.getElementById('signatureResult').innerHTML = `
+                    <div class="result-box error">
+                        ❌ Signing failed: ${error.message}
+                    </div>
+                `;
+            }
+        }
+        
+        // ═══════════════════════════════════════════════════════════════════
+        // SEND TRANSACTION
+        // ═══════════════════════════════════════════════════════════════════
+        
+        async function sendTransaction() {
+            if (!signer) {
+                alert('Please connect your wallet first!');
+                return;
+            }
+            
+            const recipient = document.getElementById('recipientAddress').value.trim();
+            const amount = document.getElementById('sendAmount').value.trim();
+            
+            if (!recipient || !ethers.utils.isAddress(recipient)) {
+                alert('Please enter a valid recipient address.');
+                return;
+            }
+            
+            if (!amount || isNaN(parseFloat(amount)) || parseFloat(amount) <= 0) {
+                alert('Please enter a valid amount.');
+                return;
+            }
+            
+            try {
+                showLoading('Please confirm the transaction in MetaMask...');
+                
+                const tx = await signer.sendTransaction({
+                    to: recipient,
+                    value: ethers.utils.parseEther(amount)
+                });
+                
+                document.getElementById('loadingText').textContent = 'Transaction submitted! Waiting for confirmation...';
+                
+                const receipt = await tx.wait();
+                
+                hideLoading();
+                
+                document.getElementById('txResult').innerHTML = `
+                    <div class="result-box success">
+                        <strong>✅ Transaction Successful!</strong><br><br>
+                        <strong>Hash:</strong> <a href="https://mainnet.qiblockchain.online/tx/${tx.hash}" 
+                            target="_blank" style="color: var(--primary);">${tx.hash.slice(0, 20)}...</a><br>
+                        <strong>To:</strong> ${recipient.slice(0, 10)}...${recipient.slice(-8)}<br>
+                        <strong>Amount:</strong> ${amount} QIE<br>
+                        <strong>Block:</strong> ${receipt.blockNumber}
+                    </div>
+                `;
+                
+                addTransaction(`Sent ${amount} QIE`, 'success', tx.hash);
+                await refreshBalance();
+                
+            } catch (error) {
+                hideLoading();
+                console.error('Transaction error:', error);
+                
+                let errorMsg = error.message;
+                if (error.code === 4001) {
+                    errorMsg = 'Transaction rejected by user.';
+                } else if (error.code === -32603) {
+                    errorMsg = 'Insufficient funds for gas + value.';
+                }
+                
+                document.getElementById('txResult').innerHTML = `
+                    <div class="result-box error">
+                        ❌ Transaction failed: ${errorMsg}
+                    </div>
+                `;
+                
+                addTransaction('Transaction Failed', 'failed');
+            }
+        }
+        
+        // ═══════════════════════════════════════════════════════════════════
+        // ASSET VERIFICATION
+        // ═══════════════════════════════════════════════════════════════════
+        
+        async function verifyAsset(assetId) {
+            const id = assetId || document.getElementById('assetId').value.trim();
+            
+            if (!id) {
+                alert('Please enter an Asset ID.');
+                return;
+            }
+            
+            document.getElementById('assetId').value = id;
+            
+            try {
+                showLoading('Verifying asset on blockchain...');
+                
+                const response = await fetch(`${API_URL}/api/verify`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ uniqueId: id })
+                });
+                
+                const data = await response.json();
+                
+                hideLoading();
+                
+                if (data.isVerified) {
+                    document.getElementById('verifyResult').innerHTML = `
+                        <div class="result-box success">
+                            <h3 style="color: var(--success); margin-bottom: 15px;">✅ Asset Verified!</h3>
+                            <div class="wallet-info-grid">
+                                <div class="info-card">
+                                    <div class="info-label">Token ID</div>
+                                    <div class="info-value">${data.tokenId}</div>
+                                </div>
+                                <div class="info-card">
+                                    <div class="info-label">Asset Type</div>
+                                    <div class="info-value">${data.assetType}</div>
+                                </div>
+                                <div class="info-card">
+                                    <div class="info-label">Issuer</div>
+                                    <div class="info-value" style="font-size: 0.8rem;">${data.issuerDID}</div>
+                                </div>
+                                <div class="info-card">
+                                    <div class="info-label">Owner</div>
+                                    <div class="info-value" style="font-size: 0.8rem;">${data.owner?.slice(0, 10)}...${data.owner?.slice(-8)}</div>
+                                </div>
+                                <div class="info-card">
+                                    <div class="info-label">Minted</div>
+                                    <div class="info-value">${new Date(data.mintedAt).toLocaleDateString()}</div>
+                                </div>
+                                <div class="info-card">
+                                    <div class="info-label">Network</div>
+                                    <div class="info-value">${data.blockchainNetwork}</div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    addTransaction(`Verified: ${id.slice(0, 15)}...`, 'success');
+                } else {
+                    document.getElementById('verifyResult').innerHTML = `
+                        <div class="result-box error">
+                            <h3 style="color: var(--error); margin-bottom: 10px;">❌ Asset NOT Verified</h3>
+                            <p style="color: var(--text-muted);">${data.message || 'This asset is not registered on the blockchain.'}</p>
+                        </div>
+                    `;
+                    addTransaction(`Not Verified: ${id.slice(0, 15)}...`, 'failed');
+                }
+                
+            } catch (error) {
+                hideLoading();
+                console.error('Verification error:', error);
+                
+                document.getElementById('verifyResult').innerHTML = `
+                    <div class="result-box error">
+                        ❌ Verification failed: Could not connect to backend server.
+                    </div>
+                `;
+            }
+        }
+        
+        // ═══════════════════════════════════════════════════════════════════
+        // EVENT HANDLERS
+        // ═══════════════════════════════════════════════════════════════════
+        
+        function handleAccountsChanged(accounts) {
+            if (accounts.length === 0) {
+                disconnectWallet();
+            } else if (accounts[0] !== connectedAddress) {
+                connectedAddress = accounts[0];
+                updateWalletUI();
+                addTransaction('Account Changed', 'success');
+            }
+        }
+        
+        function handleChainChanged(chainId) {
+            currentChainId = chainId;
+            updateNetworkDisplay();
+            updateConnectionStatus();
+            refreshBalance();
+            addTransaction(`Network Changed to ${parseInt(chainId, 16)}`, 'success');
+        }
+        
+        function handleDisconnect() {
+            disconnectWallet();
+        }
+        
+        // ═══════════════════════════════════════════════════════════════════
+        // UTILITY FUNCTIONS
+        // ═══════════════════════════════════════════════════════════════════
+        
+        function showLoading(text) {
+            document.getElementById('loadingText').textContent = text;
+            document.getElementById('loadingModal').style.display = 'flex';
+        }
+        
+        function hideLoading() {
+            document.getElementById('loadingModal').style.display = 'none';
+        }
+        
+        function copyAddress() {
+            if (connectedAddress) {
+                navigator.clipboard.writeText(connectedAddress);
+                alert('Address copied to clipboard!');
+            }
+        }
+        
+        function addTransaction(description, status, hash = null) {
+            const tx = {
+                description,
+                status,
+                hash,
+                timestamp: new Date().toLocaleTimeString()
+            };
+            
+            transactions.unshift(tx);
+            if (transactions.length > 10) transactions.pop();
+            
+            updateTransactionHistory();
+        }
+        
+        function updateTransactionHistory() {
+            const container = document.getElementById('txHistory');
+            
+            if (transactions.length === 0) {
+                container.innerHTML = `<p style="color: var(--text-muted); text-align: center; padding: 20px;">
+                    No transactions yet.
+                </p>`;
+                return;
+            }
+            
+            container.innerHTML = transactions.map(tx => `
+                <div class="tx-item">
+                    <div>
+                        <div style="font-weight: 600;">${tx.description}</div>
+                        <div style="font-size: 0.8rem; color: var(--text-muted);">${tx.timestamp}</div>
+                        ${tx.hash ? `<div class="tx-hash">${tx.hash.slice(0, 20)}...</div>` : ''}
+                    </div>
+                    <span class="tx-status tx-${tx.status}">${tx.status.toUpperCase()}</span>
+                </div>
+            `).join('');
+        }
+    </script>
+</body>
+</html>
